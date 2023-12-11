@@ -1,16 +1,24 @@
 package StepDefs;
 
 import io.cucumber.java.After;
-import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
 
 import static org.junit.Assert.assertEquals;
 
@@ -18,21 +26,42 @@ public class MyStepdefs {
     private WebDriver driver;
     private String username;
 
-    @Before
-    public void setUp() {
-        driver = new ChromeDriver();
-        driver.get("https://membership.basketballengland.co.uk/NewSupporterAccount");
-        driver.manage().window().setSize(new Dimension(1936, 1176));
-    }
+    private WebElement element;
 
     @After
     public void tearDown() {
         driver.quit();
     }
 
-    @Given("I have typed in date of birth")
+    @Given("I'm using {string} as browser")
+    public void iMUsingAsBrowser(String browser) {
+        switch (browser) {
+            case ("Chrome"):
+                ChromeOptions chromeOptions = new ChromeOptions();
+                chromeOptions.addArguments("--start-maximized");
+                driver = new ChromeDriver(chromeOptions);
+                break;
+            case ("Firefox"):
+                FirefoxOptions firefoxOptions = new FirefoxOptions();
+                firefoxOptions.addArguments("--start-maximized");
+                driver = new FirefoxDriver(firefoxOptions);
+                break;
+            case ("Edge"):
+                EdgeOptions edgeOptions = new EdgeOptions();
+                edgeOptions.addArguments("--start-maximized");
+                driver = new EdgeDriver(edgeOptions);
+                break;
+        }
+        driver.get("https://membership.basketballengland.co.uk/NewSupporterAccount");
+
+    }
+
+    @And("I have typed in date of birth")
     public void iHaveTypedInDateOfBirth() {
         driver.findElement(By.cssSelector("#dp")).sendKeys("30/11/1981");
+        //click down the calendar that pops-up
+        Actions actions = new Actions(driver);
+        actions.click().perform();
     }
 
     @And("I have typed in first name {string}")
@@ -88,7 +117,8 @@ public class MyStepdefs {
 
     @When("I click on the Confirm and join button")
     public void iClickOnTheConfirmAndJoinButton() {
-        driver.findElement(By.cssSelector("input[name='join']")).click();
+        //driver.findElement(By.cssSelector("input[name='join']")).click();
+        click(driver, By.cssSelector("input[name='join']"));
 
     }
 
@@ -116,21 +146,33 @@ public class MyStepdefs {
                 assertEquals(expected, actual);
                 break;
             case ("THANK YOU FOR CREATING AN ACCOUNT WITH BASKETBALL ENGLAND"):
-                actual = driver.findElement(By.cssSelector("div.page-content-wrapper > div > h2")).getText();
+                element = driver.findElement(By.cssSelector("div.page-content-wrapper > div > h2"));
+                actual = waitForText(driver, element);
                 assertEquals(expected, actual);
                 break;
 
         }
     }
 
-    private String getRandomUsername() {
+    private void getRandomUsername() {
         int min = 1;
         int max = 1000;
         int range = max - min + 1;
         int rand = (int) (Math.random() * range) + min;
         username = "jannikeTest" + rand;
-        return username;
+
     }
 
+    private static void click(WebDriver driver, By by) {
+        (new WebDriverWait(driver, Duration.ofSeconds(10))).until(ExpectedConditions.elementToBeClickable(by));
 
+        driver.findElement(by).click();
+    }
+
+    private String waitForText(WebDriver driver, WebElement element) {
+        (new WebDriverWait(driver, Duration.ofSeconds(10))).until(ExpectedConditions.textToBePresentInElement(element, "THANK YOU FOR CREATING AN ACCOUNT WITH BASKETBALL ENGLAND"));
+
+        return element.getText();
+    }
 }
+

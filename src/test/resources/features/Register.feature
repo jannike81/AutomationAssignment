@@ -1,7 +1,8 @@
 Feature: Register a new supporter account
 
   Scenario Outline: Registrations
-    Given I have typed in date of birth
+    Given I'm using "<browser>" as browser
+    And I have typed in date of birth
     And I have typed in first name "<username>"
     And I have typed in last name "<lastname>"
     And I have typed in email "<email>"
@@ -15,11 +16,14 @@ Feature: Register a new supporter account
     Then I get a text saying "<text>"
 
     Examples:
-      | username | lastname | email      | confEmail  | password      | confPassword  | action  | text                                                                      |
-      | Jannike  | Larsson  | @gmail.com | @gmail.com | Password12345 | Password12345 | check   | THANK YOU FOR CREATING AN ACCOUNT WITH BASKETBALL ENGLAND                 |
-      | Jannike  |          | @gmail.com | @gmail.com | Password12345 | Password12345 | check   | Last Name is required                                                     |
-      | Jannike  | Larsson  | @gmail.com | @gmail.com | Password12345 | Password54321 | check   | Password did not match                                                    |
-      | Jannike  | Larsson  | @gmail.com | @gmail.com | Password12345 | Password12345 | uncheck | You must confirm that you have read and accepted our Terms and Conditions |
+      | browser | username |  | lastname | email      | confEmail  | password      | confPassword  | action  | text                                                                      |
+      | Chrome  | Jannike  |  | Larsson  | @gmail.com | @gmail.com | Password12345 | Password12345 | check   | THANK YOU FOR CREATING AN ACCOUNT WITH BASKETBALL ENGLAND                 |
+      | Chrome  | Jannike  |  |          | @gmail.com | @gmail.com | Password12345 | Password12345 | check   | Last Name is required                                                     |
+      | Chrome  | Jannike  |  | Larsson  | @gmail.com | @gmail.com | Password12345 | Password54321 | check   | Password did not match                                                    |
+      | Chrome  | Jannike  |  | Larsson  | @gmail.com | @gmail.com | Password12345 | Password12345 | uncheck | You must confirm that you have read and accepted our Terms and Conditions |
+      | Firefox | Jannike  |  | Larsson  | @gmail.com | @gmail.com | Password12345 | Password12345 | check   | THANK YOU FOR CREATING AN ACCOUNT WITH BASKETBALL ENGLAND                 |
+      | Edge    | Jannike  |  | Larsson  | @gmail.com | @gmail.com | Password12345 | Password12345 | check   | THANK YOU FOR CREATING AN ACCOUNT WITH BASKETBALL ENGLAND                 |
+
 
 
 
