@@ -75,10 +75,9 @@ public class MyStepdefs {
     }
 
     @And("I have typed in email {string}")
-    public void iHaveTypedInEmail(String email) throws InterruptedException {
+    public void iHaveTypedInEmail(String email)  {
         getRandomUsername(); //generate a random username and save it to username
         driver.findElement(By.cssSelector("#member_emailaddress")).sendKeys(username + email);
-        Thread.sleep(5000);
     }
 
     @And("I have typed in confirmation of email {string}")
